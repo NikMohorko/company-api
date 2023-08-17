@@ -1,22 +1,16 @@
 package models
 
-import (
-	"gorm.io/gorm"
-)
-
 type Company struct {
-	gorm.Model
-	ID            string `gorm:"primaryKey"`
-	Name          string `json:"name" gorm:"unique"`
-	Description   string `json:"description"`
-	EmployeeCount *int64 `json:"employee_count"`
-	Registered    *bool  `json:"registered"`
-	Type          string `json:"type"`
+	ID            string `gorm:"primaryKey;column:ID"`
+	Name          string `json:"name" gorm:"unique;column:name"`
+	Description   string `json:"description" gorm:"column:description"`
+	EmployeeCount *int64 `json:"employee_count" gorm:"column:employee_count"`
+	Registered    *bool  `json:"registered" gorm:"column:registered"`
+	Type          string `json:"type" gorm:"column:type"`
 }
 
 type User struct {
-	gorm.Model
-	ID       string `gorm:"primaryKey"`
-	Username string `json:"username" gorm:"unique"`
-	Password string `json:"password"`
+	ID       string `gorm:"primaryKey;column:ID"`
+	Username string `json:"username" gorm:"unique;column:username"`
+	Password string `json:"password" gorm:"column:password"`
 }
