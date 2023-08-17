@@ -139,17 +139,15 @@ func UpdateCompany(c *fiber.Ctx) error {
 		})
 	}
 
-	if update := database.DB.Db.Model(&company).Where("name = ?", company.Name).Updates(company); update.Error != nil {
+	update := database.DB.Db.Model(&models.Company{}).Where("name = ?", company.Name).Updates(company)
 
-		if errors.Is(update.Error, gorm.ErrRecordNotFound) {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"message": "Company name does not exist.",
-			})
+	if update.Error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(nil)
 
-		} else {
-			return c.Status(fiber.StatusInternalServerError).JSON(nil)
-		}
-
+	} else if update.RowsAffected < 1 {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"message": "Company name does not exist.",
+		})
 	}
 
 	return c.Status(200).JSON(company)
@@ -172,8 +170,15 @@ func DeleteCompany(c *fiber.Ctx) error {
 
 	if ok {
 		// Use unscoped to prevent soft deletion - violates unique contraint if you want to create the same company again
-		if deletion := database.DB.Db.Unscoped().Where("name = ?", companyName).Delete(&company); deletion.Error != nil {
+		deletion := database.DB.Db.Unscoped().Where("name = ?", companyName).Delete(&company)
+
+		if deletion.Error != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(nil)
+
+		} else if deletion.RowsAffected < 1 {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"message": "Company does not exist.",
+			})
 		}
 
 		return c.Status(200).JSON(nil)
