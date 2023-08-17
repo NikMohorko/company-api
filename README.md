@@ -28,8 +28,8 @@ Once database initialization is finished, the container will be listening for re
 
 Complete API documentation can be found [here](https://app.swaggerhub.com/apis-docs/NikMohorko/companyAPI/1.0#/).
 
-1. Create a new user by calling the /user/create endpoint.
-2. Authenticate through the /user/authenticate endpoint. You will receive a token that you can use in all other requests using Bearer authentication. Token expires after 20 minutes, after which the authentication endpoint should be called again.
+1. Create a new user by calling the /user/create endpoint. Using default configuration the full URL would be `http://localhost:8080/user/create`.
+2. Authenticate through the /user/authenticate endpoint. You will receive a token that you should use in all other requests using Bearer authentication. Token expires after 20 minutes, after which the authentication endpoint should be called again.
 
 
 # Testing
