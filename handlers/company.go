@@ -152,7 +152,15 @@ func UpdateCompany(c *fiber.Ctx) error {
 	update := database.DB.Db.Model(&company).Where("id = ?", companyId).Updates(company)
 
 	if update.Error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(nil)
+
+		if errors.Is(update.Error, gorm.ErrDuplicatedKey) {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "Company name already exists.",
+			})
+
+		} else {
+			return c.Status(fiber.StatusInternalServerError).JSON(nil)
+		}
 
 	} else if update.RowsAffected < 1 {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
