@@ -1,0 +1,26 @@
+version: '1.0'
+
+services:
+  web:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "${HOST_PORT}:8080"
+    volumes:
+      - .:/app
+    command: go run main.go -b 0.0.0.0
+
+  db:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-db:/data
+
+volumes:
+  postgres-db:
