@@ -149,6 +149,13 @@ func UpdateCompany(c *fiber.Ctx) error {
 		})
 	}
 
+	// Validate company data
+	if err := validateCompany(company); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
 	update := database.DB.Db.Model(&company).Where("id = ?", companyId).Updates(company)
 
 	if update.Error != nil {
