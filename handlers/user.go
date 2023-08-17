@@ -109,7 +109,7 @@ func CreateUser(c *fiber.Ctx) error {
 
 	user := new(models.User)
 
-	user.ID = uuid.NewString()
+	user.Id = uuid.NewString()
 
 	if err := c.BodyParser(user); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

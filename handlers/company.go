@@ -57,7 +57,7 @@ func CreateCompany(c *fiber.Ctx) error {
 	company := new(models.Company)
 
 	// Automatically create UUID for new companies
-	company.ID = uuid.NewString()
+	company.Id = uuid.NewString()
 
 	if err := c.BodyParser(company); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -131,6 +131,16 @@ func UpdateCompany(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(errMessage)
 	}
 
+	params := c.Queries()
+
+	companyId, ok := params["id"]
+
+	if !ok {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Missing company ID in URL parameters.",
+		})
+	}
+
 	company := new(models.Company)
 
 	if err := c.BodyParser(company); err != nil {
@@ -139,16 +149,18 @@ func UpdateCompany(c *fiber.Ctx) error {
 		})
 	}
 
-	update := database.DB.Db.Model(&models.Company{}).Where("name = ?", company.Name).Updates(company)
+	update := database.DB.Db.Model(&company).Where("id = ?", companyId).Updates(company)
 
 	if update.Error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(nil)
 
 	} else if update.RowsAffected < 1 {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"message": "Company name does not exist.",
+			"message": "Company ID does not exist.",
 		})
 	}
+
+	company.Id = companyId
 
 	return c.Status(200).JSON(company)
 

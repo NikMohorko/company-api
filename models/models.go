@@ -1,7 +1,7 @@
 package models
 
 type Company struct {
-	ID            string `gorm:"primaryKey;column:ID"`
+	Id            string `gorm:"primaryKey;column:id"`
 	Name          string `json:"name" gorm:"unique;column:name"`
 	Description   string `json:"description" gorm:"column:description"`
 	EmployeeCount *int64 `json:"employee_count" gorm:"column:employee_count"`
@@ -10,7 +10,7 @@ type Company struct {
 }
 
 type User struct {
-	ID       string `gorm:"primaryKey;column:ID"`
+	Id       string `gorm:"primaryKey;column:id"`
 	Username string `json:"username" gorm:"unique;column:username"`
 	Password string `json:"password" gorm:"column:password"`
 }

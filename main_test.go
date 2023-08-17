@@ -17,6 +17,7 @@ import (
 var Token string
 var Username string
 var Port string
+var CompanyId string
 
 type authResponse struct {
 	Token    string
@@ -167,6 +168,31 @@ func TestCreateCompany(t *testing.T) {
 		t.Logf("Expected status code 201, got: " + fmt.Sprint((resp.StatusCode)))
 	}
 
+	defer resp.Body.Close()
+
+	responseBody, err := io.ReadAll(resp.Body)
+
+	if err != nil {
+		t.Fail()
+		t.Logf("Malformed response data: " + err.Error())
+	}
+
+	var response map[string]interface{}
+
+	if err := json.Unmarshal(responseBody, &response); err != nil {
+		t.Fail()
+		t.Logf("Malformed response data: " + err.Error())
+	}
+
+	companyUUID, ok := response["Id"]
+
+	if !ok {
+		t.Fail()
+		t.Logf("Company ID not in response")
+	}
+
+	CompanyId = companyUUID.(string)
+
 }
 
 func TestUpdateCompany(t *testing.T) {
@@ -183,7 +209,7 @@ func TestUpdateCompany(t *testing.T) {
 
 	jsonBody, _ := json.Marshal(body)
 
-	req, err := http.NewRequest("PATCH", "http://localhost:"+Port+"/company/update", bytes.NewBuffer(jsonBody))
+	req, err := http.NewRequest("PATCH", "http://localhost:"+Port+"/company/update?id="+CompanyId, bytes.NewBuffer(jsonBody))
 
 	if err != nil {
 		t.Fail()
